@@ -1,0 +1,1 @@
+import sys; sys.path.append('.'); from app.database import get_supabase; sb = get_supabase(); res = sb.table('profiles').select('id, role, email, full_name').execute(); print('Total:', len(res.data)); print([(r.get('role'), r.get('email'), r.get('full_name')) for r in res.data])
