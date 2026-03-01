@@ -67,7 +67,7 @@ export default function ArtisanList() {
 
   const center = job?.latitude && job?.longitude
     ? [job.latitude, job.longitude]
-    : [31.6295, -7.9811]
+    : [30.427755, -9.598107] // Agadir, Souss-Massa
 
   return (
     <div className="min-h-screen bg-artisan-cream flex flex-col">

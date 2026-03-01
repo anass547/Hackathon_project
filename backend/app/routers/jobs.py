@@ -57,11 +57,23 @@ def get_job(job_id: UUID):
     return JobOut(**_job_with_photos(supabase, r.data))
 
 
+@router.delete("/jobs/{job_id}")
+def delete_job(job_id: UUID):
+    supabase = get_supabase()
+    r = supabase.table("jobs").select("*").eq("id", str(job_id)).single().execute()
+    if not r.data:
+        raise HTTPException(status_code=404, detail="Job not found")
+    supabase.table("jobs").delete().eq("id", str(job_id)).execute()
+    return {"message": "Job deleted successfully"}
+
+
 @router.get("/jobs", response_model=list)
 def list_jobs(
     client_id: Optional[UUID] = None,
     artisan_id: Optional[UUID] = None,
     status: Optional[str] = None,
+    city: Optional[str] = None,
+    problem_type: Optional[str] = None,
     limit: int = 50,
     offset: int = 0,
 ):
@@ -73,6 +85,10 @@ def list_jobs(
         q = q.eq("artisan_id", str(artisan_id))
     if status:
         q = q.eq("status", status)
+    if city:
+        q = q.eq("city", city)
+    if problem_type:
+        q = q.eq("problem_type", problem_type)
     q = q.order("created_at", desc=True).range(offset, offset + limit - 1)
     r = q.execute()
     out = []

@@ -41,8 +41,23 @@ def predict_price_range(
         except Exception:
             pass
     # Fallback formula
-    base = 300 + surface_area * 25 + severity * 80
-    city_mult = 1.2 if city and "Casablanca" in city else 1.0
+    surface_val = float(surface_area) if surface_area else 10.0
+    
+    rates = {
+        "Plombier": 300,
+        "Electricien": 250,
+        "Sebbagh": 60,
+        "Zlayji": 120,
+        "Gebbas": 150
+    }
+    base_rate = rates.get(problem_type, 200)
+    
+    if problem_type in ["Sebbagh", "Zlayji", "Gebbas"]:
+        base = base_rate * surface_val + severity * 100
+    else:
+        base = base_rate + surface_val * 5 + severity * 150
+        
+    city_mult = 1.2 if city and city.lower() in ["casablanca", "rabat", "marrakech"] else 1.0
     p_min = base * 0.75 * city_mult
     p_max = base * 1.35 * city_mult
-    return (round(p_min, 0), round(p_max, 0), "medium")
+    return (int(p_min), int(p_max), "medium")

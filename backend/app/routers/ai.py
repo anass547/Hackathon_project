@@ -34,7 +34,7 @@ async def analyze_photo_endpoint(
     if city and result.get("severity"):
         p_min, p_max, conf = predict_price_range(
             problem_type=result.get("problem_type", "Plombier"),
-            surface_area=surface_area or 10,
+            surface_area=float(surface_area if surface_area else 0.0),
             city=city,
             severity=result.get("severity", 3),
         )
@@ -42,6 +42,8 @@ async def analyze_photo_endpoint(
             result["price_min"] = p_min
             result["price_max"] = p_max
             result["confidence_level"] = conf
+            avg_price = (p_min + p_max) / 2
+            result["duration_hours"] = round(max(1.0, avg_price / 250), 1)
     return AnalyzeResponse(
         problem_type=result.get("problem_type", "Plombier"),
         severity=result.get("severity", 3),
@@ -64,7 +66,7 @@ async def analyze_photo_json(
     if city and result.get("severity"):
         p_min, p_max, conf = predict_price_range(
             problem_type=result.get("problem_type", "Plombier"),
-            surface_area=surface_area or 10,
+            surface_area=float(surface_area if surface_area else 0.0),
             city=city,
             severity=result.get("severity", 3),
         )
@@ -72,6 +74,8 @@ async def analyze_photo_json(
             result["price_min"] = p_min
             result["price_max"] = p_max
             result["confidence_level"] = conf
+            avg_price = (p_min + p_max) / 2
+            result["duration_hours"] = round(max(1.0, avg_price / 250), 1)
     return AnalyzeResponse(
         problem_type=result.get("problem_type", "Plombier"),
         severity=result.get("severity", 3),

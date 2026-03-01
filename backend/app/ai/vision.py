@@ -24,26 +24,40 @@ def analyze_photo(image_base64: str, description: str = "", city: str = "", surf
 
 def _mock_analyze(description: str, city: str, surface_area: float) -> dict:
     """Deterministic mock for dev/demo."""
+    desc_lower = (description or "").lower()
     problem_type = "Plombier"
-    if "peinture" in (description or "").lower() or "paint" in (description or "").lower():
+    if "peinture" in desc_lower or "paint" in desc_lower or "sebbagh" in desc_lower:
         problem_type = "Sebbagh"
-    if "carrelage" in (description or "").lower() or "tile" in (description or "").lower():
+    if "carrelage" in desc_lower or "tile" in desc_lower or "zlayji" in desc_lower or "zellige" in desc_lower:
         problem_type = "Zlayji"
-    if "platre" in (description or "").lower() or "plaster" in (description or "").lower():
+    if "platre" in desc_lower or "plaster" in desc_lower or "gebbas" in desc_lower:
         problem_type = "Gebbas"
-    if "electr" in (description or "").lower():
+    if "electr" in desc_lower or "courant" in desc_lower:
         problem_type = "Electricien"
+    
     severity = 3
+    if any(w in desc_lower for w in ["urgence", "fuite", "grave", "danger", "très"]):
+        severity = 5
+    elif any(w in desc_lower for w in ["fort", "important", "beaucoup"]):
+        severity = 4
+    elif any(w in desc_lower for w in ["petit", "léger", "simple", "peu"]):
+        severity = 1
+    elif any(w in desc_lower for w in ["moyen", "normal"]):
+        severity = 2
+    
     base_min, base_max = 400, 1200
     if surface_area > 0:
         base_min = 300 + surface_area * 20
         base_max = 800 + surface_area * 40
+        
+    duration = max(1.0, round((base_min + base_max) / 2 / 200, 1))
+
     return {
         "problem_type": problem_type,
         "severity": severity,
-        "price_min": round(base_min, 0),
-        "price_max": round(base_max, 0),
-        "duration_hours": 2.0,
+        "price_min": int(base_min),
+        "price_max": int(base_max),
+        "duration_hours": float(duration),
         "confidence_level": "medium",
     }
 

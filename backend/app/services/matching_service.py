@@ -26,12 +26,12 @@ def match_artisans(
 ) -> List[dict]:
     """
     Returns top_k artisans with score, distance, profile summary.
-    problem_type maps to profession (e.g. Plombier, Electricien).
+    Sorts purely by Fairness (Round Robin).
     """
     supabase = get_supabase()
     # Fetch artisans in same city (or nearby); optionally filter by profession
     q = supabase.table("artisans").select("*, profiles(full_name, phone, email), artisan_stats(avg_rating, global_score)")
-    q = q.eq("city", city).eq("is_available", True)
+    q = q.eq("city", city).eq("is_available", True).eq("profession", problem_type)
     r = q.execute()
     rows = r.data or []
     scored = []
@@ -58,13 +58,22 @@ def match_artisans(
         if not prof.get("email"):
             continue
             
-        score = (
-            settings.match_weight_distance * inv_dist * 10
-            + settings.match_weight_rating * avg_rating
-            + settings.match_weight_availability * availability
-            + settings.match_weight_specialization * profession_match
-            - refusal_penalty
-        )
+        # Extract historic metrics for Fairness ranking (default to 0 to prioritize newly registered artisans)
+        past_missions = row.get("assigned_count") or 0
+        last_assigned = row.get("last_assigned_at") or "1970-01-01"
+
+        # Fairness Mode => Round Robin => Priority to lowest historic missions, then oldest assignment
+        import datetime
+        try:
+            dt = datetime.datetime.fromisoformat(last_assigned.replace("Z", "+00:00")).timestamp()
+        except:
+            dt = 0
+            
+        # Penalize linearly by amount of past missions and slightly by recent assignment
+        # Negative score means smaller is worse. Since we reverse sort below, we want larger = better.
+        # So fewest missions -> higher score.
+        score = -(past_missions * 100000) - dt
+
         scored.append({
             "artisan_id": row["id"],
             "score": float(score),

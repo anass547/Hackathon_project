@@ -61,24 +61,24 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen bg-artisan-cream p-4 flex flex-col items-center">
+    <div className="min-h-screen bg-tadelakt p-4 flex flex-col items-center">
       <div className="w-full max-w-5xl mt-10">
-        <h1 className="text-3xl font-bold text-artisan-dark mb-8 text-center" style={{ fontFamily: 'Georgia, serif' }}>
-          Démo L'Artisan - Choisissez un profil
+        <h1 className="text-3xl font-bold text-medina-dark mb-8 text-center" style={{ fontFamily: 'Georgia, serif' }}>
+          Démo L'm3ALEM - Choisissez un profil
         </h1>
 
         <div className="flex gap-4 mb-8 justify-center">
           <button
             type="button"
             onClick={() => setRoleMode('client')}
-            className={`px-8 py-3 rounded-xl font-bold text-lg transition-all ${roleMode === 'client' ? 'bg-artisan-orange text-white shadow-[0_4px_15px_rgba(230,126,34,0.4)] scale-105' : 'bg-white text-gray-700 hover:bg-gray-100 shadow'}`}
+            className={`px-8 py-3 rounded-xl font-bold text-lg transition-all ${roleMode === 'client' ? 'bg-terracotta text-white shadow-[0_4px_15px_rgba(178,34,34,0.4)] scale-105' : 'bg-white text-gray-700 hover:bg-gray-100 shadow'}`}
           >
             👤 Se connecter comme Client
           </button>
           <button
             type="button"
             onClick={() => setRoleMode('worker')}
-            className={`px-8 py-3 rounded-xl font-bold text-lg transition-all ${roleMode === 'worker' ? 'bg-artisan-dark text-white shadow-[0_4px_15px_rgba(44,62,80,0.4)] scale-105' : 'bg-white text-gray-700 hover:bg-gray-100 shadow'}`}
+            className={`px-8 py-3 rounded-xl font-bold text-lg transition-all ${roleMode === 'worker' ? 'bg-medina-dark text-white shadow-[0_4px_15px_rgba(43,45,66,0.4)] scale-105' : 'bg-white text-gray-700 hover:bg-gray-100 shadow'}`}
           >
             🛠️ Se connecter comme Artisan
           </button>
@@ -97,14 +97,14 @@ export default function Auth() {
                 key={p.id}
                 onClick={() => handleLogin(p)}
                 className="bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl hover:border-opacity-100 border-2 border-transparent transition-all cursor-pointer transform hover:-translate-y-1 group"
-                style={{ borderColor: roleMode === 'client' ? 'rgba(230,126,34,0)' : 'rgba(44,62,80,0)' }}
+                style={{ borderColor: roleMode === 'client' ? 'rgba(178,34,34,0)' : 'rgba(43,45,66,0)' }}
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-inner ${roleMode === 'client' ? 'bg-artisan-orange' : 'bg-artisan-dark'}`}>
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-inner ${roleMode === 'client' ? 'bg-terracotta' : 'bg-medina-dark'}`}>
                     {p.full_name?.charAt(0) || '?'}
                   </div>
                   <div>
-                    <h3 className="font-bold text-xl text-gray-900 group-hover:text-artisan-orange transition-colors">{p.full_name}</h3>
+                    <h3 className="font-bold text-xl text-gray-900 group-hover:text-terracotta transition-colors">{p.full_name}</h3>
                     <p className="text-sm text-gray-500">{p.email}</p>
                   </div>
                 </div>
@@ -123,7 +123,7 @@ export default function Auth() {
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-gray-100 text-center">
-                  <button className={`text-sm font-semibold py-2 px-4 rounded-lg w-full transition-colors ${roleMode === 'client' ? 'bg-orange-50 text-artisan-orange group-hover:bg-artisan-orange group-hover:text-white' : 'bg-gray-50 text-artisan-dark group-hover:bg-artisan-dark group-hover:text-white'}`}>
+                  <button className={`text-sm font-semibold py-2 px-4 rounded-lg w-full transition-colors ${roleMode === 'client' ? 'bg-terracotta/10 text-terracotta group-hover:bg-terracotta group-hover:text-white' : 'bg-gray-50 text-medina-dark group-hover:bg-medina-dark group-hover:text-white'}`}>
                     Cliquer pour se connecter →
                   </button>
                 </div>

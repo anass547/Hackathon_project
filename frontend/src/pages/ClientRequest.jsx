@@ -71,7 +71,7 @@ export default function ClientRequest() {
       })
       setMatches(matchData)
       setStep(3)
-      navigate(`/artisans/${jobData.id}`)
+      navigate(`/client/tracking/${jobData.id}`)
     } catch (err) {
       setError(err.response?.data?.detail || 'Erreur création')
     } finally {
@@ -113,7 +113,7 @@ export default function ClientRequest() {
               <span className="text-sm text-gray-600">Surface (m²) optionnel</span>
               <input type="number" min="0" step="0.1" value={surfaceArea} onChange={(e) => setSurfaceArea(e.target.value)} className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2" />
             </label>
-            <button type="submit" disabled={loading || !city} className="w-full py-3 rounded-lg bg-artisan-orange text-white font-medium disabled:opacity-50">
+            <button type="submit" disabled={loading || !city} className="w-full py-3 mt-4 rounded-lg bg-artisan-orange text-white font-medium disabled:opacity-50">
               {loading ? 'Analyse en cours...' : 'Obtenir une estimation'}
             </button>
           </form>

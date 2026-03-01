@@ -47,6 +47,29 @@ def list_artisans(
     return out
 
 
+@router.get("/artisans/me", response_model=ArtisanOut)
+def get_my_artisan_profile(user_id: UUID):
+    """Get artisan profile for the logged in user."""
+    supabase = get_supabase()
+    r = supabase.table("artisans").select("*, profiles(full_name, phone)").eq("user_id", str(user_id)).execute()
+    if not r.data:
+        raise HTTPException(status_code=404, detail="Artisan profile not found for this user")
+    
+    row = r.data[0]
+    prof = row.get("profiles") or {}
+    if isinstance(prof, list):
+        prof = prof[0] if prof else {}
+        
+    row["full_name"] = prof.get("full_name")
+    row["phone"] = prof.get("phone")
+    if "profiles" in row:
+        del row["profiles"]
+        
+    stat = supabase.table("artisan_stats").select("*").eq("artisan_id", row["id"]).execute()
+    row["stats"] = stat.data[0] if stat.data else None
+    return ArtisanOut(**row)
+
+
 @router.get("/artisans/{artisan_id}", response_model=ArtisanOut)
 def get_artisan(artisan_id: UUID):
     supabase = get_supabase()
@@ -54,8 +77,13 @@ def get_artisan(artisan_id: UUID):
     if not r.data:
         raise HTTPException(status_code=404, detail="Artisan not found")
     row = r.data
-    row["full_name"] = (row.get("profiles") or {}).get("full_name")
-    row["phone"] = (row.get("profiles") or {}).get("phone")
+    
+    prof = row.get("profiles") or {}
+    if isinstance(prof, list):
+        prof = prof[0] if prof else {}
+        
+    row["full_name"] = prof.get("full_name")
+    row["phone"] = prof.get("phone")
     if "profiles" in row:
         del row["profiles"]
     stat = supabase.table("artisan_stats").select("*").eq("artisan_id", str(artisan_id)).execute()
